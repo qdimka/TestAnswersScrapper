@@ -24,29 +24,35 @@ html = [get_html(url) for url in sites]
 soup = BeautifulSoup(html[0], "html.parser")
 
 
-def filter_qa(tag):
+def f_questions(tag):
     return not tag.has_attr('class') and \
            not tag.has_attr('id') and \
            (tag.name == "p" or tag.name == "ol")
 
 
-def filter_answers(tag):
+def f_answers(tag):
     return tag.name == "li"
 
-questions = soup.find_all(filter_qa)
 
-for q in questions:
+def f_one_answers(tag):
+    pass
 
-    answers = q.find_all(filter_answers)
 
-    if len(answers) != 0:
-        for answer in answers:
-            if answer.find('span', attrs={'style': "background-color: #c66201; color: #fff;"}) is not None:
-                print ""
-                print '***' + ' ' + answer.text
-                print ""
-            else:
-                print answer.text
-    else:
-        print q.text
+def get_questions_list(filter_quest, filter_answers):
+    list_questions = {}
+    questions = soup.find_all(filter_quest)
 
+    for q in questions:
+
+        answers = q.find_all(filter_answers)
+
+        if len(answers) != 0:
+            for answer in answers:
+                if answer.find('span', attrs={'style': "background-color: #c66201; color: #fff;"}) is not None:
+                    list_questions.append('***' + ' ' + answer.text)
+                else:
+                    list_questions.append(answer.text)
+        else:
+            list_questions.append(q.text)
+
+    return list_questions
