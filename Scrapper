@@ -24,13 +24,29 @@ html = [get_html(url) for url in sites]
 soup = BeautifulSoup(html[0], "html.parser")
 
 
-def filter(tag):
+def filter_qa(tag):
     return not tag.has_attr('class') and \
            not tag.has_attr('id') and \
            (tag.name == "p" or tag.name == "ol")
 
 
-questions = soup.find_all(filter)
+def filter_answers(tag):
+    return tag.name == "li"
+
+questions = soup.find_all(filter_qa)
 
 for q in questions:
-    print q.text
+
+    answers = q.find_all(filter_answers)
+
+    if len(answers) != 0:
+        for answer in answers:
+            if answer.find('span', attrs={'style': "background-color: #c66201; color: #fff;"}) is not None:
+                print ""
+                print '***' + ' ' + answer.text
+                print ""
+            else:
+                print answer.text
+    else:
+        print q.text
+
